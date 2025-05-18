@@ -101,10 +101,21 @@ if uploaded_file:
 
             st.info("Bu işlem birkaç saniye sürebilir...")
 
-            knn_hit, _ = loo_knn_test(user_summary, user_item_sparse, user_encoder, product_encoder)
-            apriori_hit, _ = loo_apriori_test(purchase_df, rules_df)
-            segment_hit, _, user_segment_df = loo_segment_knn(user_summary, user_item_sparse, user_encoder, product_encoder)
-            hybrid_hit, _ = loo_hybrid_test(user_summary, user_item_sparse, user_encoder, product_encoder,rules_df, segment_results, user_segment_df=user_segment_df)
+           # Streamlit sidebar üzerinden kontrol edilebilir test sayısı (kullanıcıya seçtirebilirsin)
+            test_limit = st.sidebar.slider("LOO Test Kullanıcı Sayısı", 100, 1000, 300, step=100)
+
+            # LOO testleri
+            knn_hit, _ = loo_knn_test(user_summary, user_item_sparse, user_encoder, product_encoder, test_limit=test_limit)
+            apriori_hit, _ = loo_apriori_test(purchase_df, rules_df, test_limit=test_limit)
+            segment_hit, _, user_segment_df = loo_segment_knn(
+                user_summary, user_item_sparse, user_encoder, product_encoder,
+                test_limit=test_limit
+            )
+            hybrid_hit, _ = loo_hybrid_test(
+                user_summary, user_item_sparse, user_encoder, product_encoder,
+                rules_df, segment_results, user_segment_df=user_segment_df,
+                test_limit=test_limit
+)
 
             st.success(f"🎯 KNN Hit Rate: {knn_hit:.2%}")
             st.success(f"🎯 Apriori Hit Rate: {apriori_hit:.2%}")
