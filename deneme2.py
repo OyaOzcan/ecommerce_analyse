@@ -49,7 +49,14 @@ def create_user_product_features(df):
             user_product_stats[col] = 0
 
     user_product_stats["Label"] = (user_product_stats["purchase_count"] > 0).astype(int)
-    return user_product_stats
+
+    # --- Encoder işlemleri ---
+    user_encoder = LabelEncoder()
+    product_encoder = LabelEncoder()
+    user_product_stats["UserID_enc"] = user_encoder.fit_transform(user_product_stats["UserID"])
+    user_product_stats["ProductID_enc"] = product_encoder.fit_transform(user_product_stats["ProductID"])
+
+    return user_product_stats, user_encoder, product_encoder
 
 # 4. Segmentleme ve görselleştirme
 def segment_users(user_product_stats):

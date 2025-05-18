@@ -24,7 +24,7 @@ uploaded_file = st.file_uploader("📂 CSV veri dosyasını yükleyin", type=["c
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
     st.success("✅ Veri başarıyla yüklendi.")
-    user_product_stats = create_user_product_features(df)
+    user_product_stats, user_encoder, product_encoder = create_user_product_features(df)
 
     if task_type == "Satın Alma Tahmini" and run_button:
         X_train, X_test, y_train, y_test = train_test_split(
@@ -77,6 +77,10 @@ if uploaded_file:
 
         with tabs[1]:
             st.subheader("🔗 Apriori Kuralları")
+            user_encoder = LabelEncoder().fit(df['UserID'])
+            product_encoder = LabelEncoder().fit(df['ProductID'])
+            df['UserID_enc'] = user_encoder.transform(df['UserID'])
+            df['ProductID_enc'] = product_encoder.transform(df['ProductID'])
             if st.button("Apriori Analizini Başlat"):
                 itemsets, rules = run_apriori_analysis(df)
                 if rules is not None:
