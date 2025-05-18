@@ -11,13 +11,17 @@ uploaded_file = st.file_uploader("📂 CSV veri dosyasını yükleyin", type="cs
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
     stats, interaction_matrix, purchase_df, user_summary, user_encoder, product_encoder = prepare_datasets(df)
-    
-    # 🔥 Hibrit sistemde ve segment analizde kullanılacak encoding'ler
-    #df["UserID_enc"] = user_encoder.transform(df["UserID"])
-    #df["ProductID_enc"] = product_encoder.transform(df["ProductID"])
+
+    # 🛑 NaN değerleri temizlemeden encoder kullanma!
+    df = df[df["ProductID"].notnull() & df["UserID"].notnull()].copy()
+
+    # ✅ Artık güvenle transform edebilirsin
+    df["UserID_enc"] = user_encoder.transform(df["UserID"])
+    df["ProductID_enc"] = product_encoder.transform(df["ProductID"])
 
     X = stats[["view_count", "cart_count"]]
     y = stats["Label"]
+
 
     st.sidebar.header("🔍 Model ve Öneri Seçimi")
     task = st.sidebar.radio("Yapılacak İşlem:", ["Satın Alma Tahmini", "Ürün Öneri Sistemi"], key="task_selector")
