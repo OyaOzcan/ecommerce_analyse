@@ -183,5 +183,4 @@ if uploaded_file:
             sns.barplot(data=comp_df, x='Algoritma', y='Hit Rate', palette='viridis', ax=ax)
             plt.title("Algoritma Bazlı Hit Rate Karşılaştırması")
             st.pyplot(fig)
-            st.subheader("📊 Başarı Karşılaştırması")
-            st.info("Burada tüm öneri algoritmalarının başarı oranları karşılaştırmalı olarak gösterilecektir.")
+        
